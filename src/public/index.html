@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chat Melito</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      #container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 425px;
+        height: 100%;
+        background-image: radial-gradient(#0049ff, transparent 1px),
+          radial-gradient(#0049ff, transparent 1px);
+        background-position: 0 0, 25px 25px;
+        background-size: 50px 50px;
+      }
+
+      #header {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid lightgrey;
+        background-color: white;
+      }
+
+      #header h1 {
+        font-size: 1.5rem;
+        color: #005ce6;
+      }
+
+      #messages {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        flex: 1;
+        list-style-type: none;
+        padding: 1rem;
+      }
+
+      #messages li {
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 0.3rem;
+        border: 1px solid lightgrey;
+      }
+
+      #form {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-top: 1px solid lightgray;
+        background-color: white;
+      }
+
+      #form input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid lightgray;
+        border-radius: 0.3rem;
+      }
+
+      #form button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.3rem;
+        font-weight: bold;
+        color: white;
+        background-color: #005ce6;
+      }
+
+      @media screen and (min-width: 426px) {
+        #container {
+          height: 740px;
+          border: 2px solid lightgray;
+          border-radius: 0.5rem;
+        }
+
+        #header {
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
+        }
+
+        #form {
+          border-bottom-left-radius: 0.5rem;
+          border-bottom-right-radius: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <header id="header">
+        <h1>Chat Melito</h1>
+      </header>
+      <ul id="messages"></ul>
+      <form id="form" action="">
+        <input id="input" autocomplete="off" />
+        <button>Send</button>
+      </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io()
+
+      const form = document.getElementById('form')
+      const messages = document.getElementById('messages')
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault()
+        const { input } = event.target.elements
+        if (input.value) {
+          socket.emit('chatMessage', input.value)
+          input.value = ''
+          input.focus()
+        }
+      })
+
+      socket.on('chatMessage', (value) => {
+        const message = document.createElement('li')
+        message.textContent = value
+        messages.appendChild(message)
+        window.scrollTo(0, document.body.scrollHeight)
+      })
+    </script>
+  </body>
+</html>
